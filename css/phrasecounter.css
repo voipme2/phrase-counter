@@ -17,10 +17,16 @@
 }
 
 .plus {
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
     background: url(images/plus.png) no-repeat;
 }
 
 .minus {
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
     background: url(images/minus.png) no-repeat;
 }
 

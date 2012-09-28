@@ -13,6 +13,7 @@
                 phrase: "empty phrase",
                 count: 0,
                 color: "#000",
+                hotkey: "",
                 date: new Date()
             };
         },
@@ -29,6 +30,14 @@
             var colors = [ "red", "orange", "blue", "green" ]
             var ind = Math.floor(Math.random() * colors.length);
             return colors[ind];
+        },
+        
+        inc: function() {
+            this.save({ count: this.get("count") + 1 });
+        },
+        
+        dec: function() {
+           this.save({ count: this.get("count") - 1 });
         },
         
         clear: function() {
@@ -52,7 +61,7 @@
         tagName: "div",
         template: _.template($("#phrase-template").html()),
         events: {
-            "click .delete"  : "deletePhrase",
+            "click .delete"  : "clear",
             "click .hotkey"  : "changeHotkey",
             "click .plus"    : "incrementCount",
             "click .minus"   : "decrementCount"
@@ -66,6 +75,18 @@
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
+        },
+        
+        changeHotkey: function() {
+        
+        },
+        
+        incrementCount: function() {
+            this.model.inc();
+        },
+        
+        decrementCount: function() {
+            this.model.dec();
         },
         
         clear: function() {
