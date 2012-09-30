@@ -1,4 +1,4 @@
-/**
+﻿/**
  * phrasecounter.js
  *
  * Contains the Javascript for the application.  Might eventually split this into different files.
