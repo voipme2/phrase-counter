@@ -54,6 +54,10 @@
         model: Phrase,
         localStorage: new Store("pc-phrase"),
         
+        hasHotkey: function(hotkey) {
+           return this.filter(function(phrase){ return phrase.get('hotkey') == hotkey; });
+        },
+
         comparator: function(phrase) {
             return phrase.get("date");
         }
@@ -150,7 +154,7 @@
         
         checkHotkey: function(e) {
             var c = String.fromCharCode(e.keyCode);
-            cconsole.log(c);
+            _.each(Phrases.hasHotkey(c), function(phrase){ phrase.inc(); });                     
         },
         
         startTiming: function() {
