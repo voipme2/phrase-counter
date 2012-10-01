@@ -31,6 +31,10 @@
             var ind = Math.floor(Math.random() * colors.length);
             return colors[ind];
         },
+       
+        setHotkey: function(c) {
+            this.save({ hotkey: c });
+        },
         
         inc: function() {
             this.save({ count: this.get("count") + 1 });
@@ -78,7 +82,14 @@
         },
         
         changeHotkey: function() {
+            var c = prompt("Enter a hotkey:");
+            if (c) {
+                this.model.setHotkey(c);
+            }
+        },
         
+        checkHotkey: function(e) {
+            console.log(e.keyCode);
         },
         
         incrementCount: function() {
@@ -97,7 +108,6 @@
     var AppView = Backbone.View.extend({
         el: $("#phrase-app"),
         events: {
-            "keypress body"         : "checkHotkeys",
             "keypress #new-phrase"  : "createOnEnter",
             "click #start"          : "startTiming",
             "click #stop"           : "stopTiming",
@@ -105,6 +115,9 @@
         },
         
         initialize: function() {
+            
+            $(document).bind('keydown', this.checkHotkey);
+        
             this.newPhrase = $("#new-phrase");
         
             Phrases.bind("add", this.addPhrase, this);
@@ -135,8 +148,9 @@
             this.newPhrase.val('');
         },
         
-        checkHotkeys: function() {
-            alert("todo");
+        checkHotkey: function(e) {
+            var c = String.fromCharCode(e.keyCode);
+            cconsole.log(c);
         },
         
         startTiming: function() {

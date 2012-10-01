@@ -12,23 +12,25 @@
     <body>
         
         <div id="phrase-app">
-            <div id="active-phrases"></div>
+            <table id="active-phrases"></table>
             <input id="new-phrase" type="text" placeholder="New..." />
             <div id="elapsed"></div>
-            <button id="start">Start</button>
-            <button id="stop">Stop</button>
-            <button id="reset">Reset</button>
+            <div class='buttons'>
+                <button id="start">Start</button>
+                <button id="stop">Stop</button>
+                <button id="reset">Reset</button>
+            </div>
         </div>
         
         <script type="text/template" id="phrase-template">
-            <div class="phrase-view">
-                <div class="delete"></div>
-                <div class="phrase"><%- phrase %></div>
-                <div class="hotkey" title="Hotkey: <%= hotkey %>"></div>
-                <div class="plus"></div>
-                <div class="minus"></div>
-                <div class="phrase-count" style="color: <%= color %>"><%- count %></div>
-            </div>
+            <tr class="phrase-view">
+                <td class="delete" ><img src="images/delete.png"/></td>
+                <td class="phrase"><%- phrase %></td>
+                <td class="hotkey"><img src="images/hotkey.png" title="Hotkey: <%= hotkey %>" /></td>
+                <td class="plus"><img src="images/plus.png"/></td>
+                <td class="minus"><img src="images/minus.png" /></td>
+                <td class="phrase-count" style="color: <%= color %>"><%- count %></td>
+            </tr>
         </script>
     </body>
 </html>
