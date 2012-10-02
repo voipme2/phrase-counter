@@ -145,7 +145,6 @@
             $(document).bind('keydown', this.checkHotkey);
         
             this.newPhrase = $("#new-phrase");
-            this.graph = Raphael("graph", 800, 250);
         
             Phrases.bind("add", this.addPhrase, this);
             Phrases.bind("reset", this.addAllPhrases, this);
