@@ -88,7 +88,7 @@
         
         getGraphData: function() {
             // todo generate graph data
-            return [[1,2,3,5,6,8,2]];
+            return [[1,2,3,5,6,8,2], [4,5,2,3,2,1,3], [2,3,4,6,7,4,6]];
         }
     });
 
