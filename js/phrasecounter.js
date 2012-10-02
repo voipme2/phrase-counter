@@ -13,8 +13,7 @@
                 phrase: "empty phrase",
                 count: 0,
                 color: "#000",
-                hotkey: "",
-                date: new Date()
+                hotkey: ""
             };
         },
         
@@ -43,12 +42,24 @@
         dec: function() {
            this.save({ count: this.get("count") - 1 });
         },
+
+        reset: function() {
+           this.save({ count: 0 });
+        },
         
         clear: function() {
             this.destroy();
         }
     });
     
+    var PhraseHistory = Phrase.extend({
+        initialize: function() {
+            if (!this.get("date")) {
+                this.set({ date: new Date() });
+            }
+        }
+    });
+
     // Collections
     var PhraseList = Backbone.Collection.extend({
         model: Phrase,
@@ -58,14 +69,16 @@
             return this.filter(function(phrase){ 
                 return phrase.get('hotkey') == hotkey.toLowerCase(); 
             });
-        },
-
-        comparator: function(phrase) {
-            return phrase.get("date");
         }
     });
     
+    var PhraseHistoryList = Backbone.Collection.extend({
+        model: PhraseHistory,
+        localStorage: new Store("pc-history")
+    });
+
     var Phrases = new PhraseList;
+    var PHistory = new PhraseHistoryList;
     
     var PhraseView = Backbone.View.extend({
         tagName: "div",
@@ -113,7 +126,8 @@
             "keypress #new-phrase"  : "createOnEnter",
             "click #start"          : "startTiming",
             "click #stop"           : "stopTiming",
-            "click #reset"          : "resetPage"
+            "click #reset"          : "resetPage",
+            "click #save"           : "saveHistory"
         },
         
         initialize: function() {
@@ -155,6 +169,16 @@
             _.each(Phrases.hasHotkey(c), function(phrase){ phrase.inc(); });                     
         },
         
+        saveHistory: function() {
+            var msg = "Totals:\n\n";
+            Phrases.each(function(p) {
+                msg += "\t" _+ p.get("phrase") + ": " + p.get("count") + "(" + (parseInt(p.get("count")) / 75) + ")\n";
+                PHistory.create({ phrase: p, date: new Date() });
+                p.reset();
+            });
+            alert(msg);
+        },
+
         startTiming: function() {
             alert("todo");
         },
@@ -164,7 +188,7 @@
         },
         
         resetPage: function() {
-            alert("todo");
+            Phrases.each(function(phrase) { phrase.reset(); });
         }
     });
     
