@@ -33,7 +33,7 @@
         },
        
         setHotkey: function(c) {
-            this.save({ hotkey: c });
+            this.save({ hotkey: c.toLowerCase() });
         },
         
         inc: function() {
@@ -55,7 +55,9 @@
         localStorage: new Store("pc-phrase"),
         
         hasHotkey: function(hotkey) {
-           return this.filter(function(phrase){ return phrase.get('hotkey') == hotkey; });
+            return this.filter(function(phrase){ 
+                return phrase.get('hotkey') == hotkey.toLowerCase(); 
+            });
         },
 
         comparator: function(phrase) {
@@ -90,10 +92,6 @@
             if (c) {
                 this.model.setHotkey(c);
             }
-        },
-        
-        checkHotkey: function(e) {
-            console.log(e.keyCode);
         },
         
         incrementCount: function() {
