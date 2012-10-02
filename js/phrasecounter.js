@@ -21,6 +21,9 @@
             if (!this.get("phrase")) {
                 this.set({"phrase": this.defaults.phrase });
             }
+            if (!this.get("hotkey")) {
+                this.set({ "hotkey": this.get("phrase")[0].toLowerCase() });
+            }
             this.set({ "color": this.getColor() });
         },
         
