@@ -84,7 +84,12 @@
     
     var PhraseHistoryList = Backbone.Collection.extend({
         model: PhraseHistory,
-        localStorage: new Store("pc-history")
+        localStorage: new Store("pc-history"),
+        
+        getGraphData: function() {
+            // todo generate graph data
+            return [[1,2,3,5,6,8,2]];
+        }
     });
 
     var Phrases = new PhraseList;
@@ -151,6 +156,10 @@
             Phrases.bind("all", this.render, this);
             
             Phrases.fetch();
+            PHistory.fetch();
+            
+            // we'll also render the graph, now that we have the history
+            $.jqplot('graph', PHistory.getGraphData());
         },
         
         render: function() {
