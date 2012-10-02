@@ -165,14 +165,17 @@
         },
         
         checkHotkey: function(e) {
-            var c = String.fromCharCode(e.keyCode);
-            _.each(Phrases.hasHotkey(c), function(phrase){ phrase.inc(); });                     
+            if (!e.ctrlKey) {
+                var c = String.fromCharCode(e.keyCode);
+                _.each(Phrases.hasHotkey(c), function(phrase){ phrase.inc(); });
+            }
         },
         
         saveHistory: function() {
             var msg = "Totals:\n\n";
             Phrases.each(function(p) {
-                msg += "\t" _+ p.get("phrase") + ": " + p.get("count") + "(" + (parseInt(p.get("count")) / 75) + ")\n";
+                msg += "\t" + p.get("phrase") + ": " 
+                    + p.get("count") + " (" + (parseInt(p.get("count")) / 75).toPrecision(3) + ")\n";
                 PHistory.create({ phrase: p, date: new Date() });
                 p.reset();
             });
