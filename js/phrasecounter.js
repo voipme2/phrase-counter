@@ -6,13 +6,16 @@
  
  $(function() {
     
+    var timer = null;
+    var startTime = null;
+    var endTime = null;
+    
     // Models
     var Phrase = Backbone.Model.extend({
         defaults: function() {
             return {
                 phrase: "empty phrase",
                 count: 0,
-                color: "#000",
                 hotkey: ""
             };
         },
@@ -21,17 +24,21 @@
             if (!this.get("phrase")) {
                 this.set({"phrase": this.defaults.phrase });
             }
+            
             if (!this.get("hotkey")) {
                 this.set({ "hotkey": this.get("phrase")[0].toLowerCase() });
             }
-            this.set({ "color": this.getColor() });
+            
+            if (!this.get("color")) {
+                this.set({ "color": this.getColor() });
+            }
+            
         },
         
         // temporary
         getColor: function() {
-            var colors = [ "red", "orange", "blue", "green" ]
-            var ind = Math.floor(Math.random() * colors.length);
-            return colors[ind];
+            var hexStr = Math.round(Math.random() * 16777215).toString(16);
+            return "#" + Array(7 - hexStr.length).join("0") + hexStr;
         },
        
         setHotkey: function(c) {
@@ -138,6 +145,7 @@
             $(document).bind('keydown', this.checkHotkey);
         
             this.newPhrase = $("#new-phrase");
+            this.graph = Raphael("graph", 800, 250);
         
             Phrases.bind("add", this.addPhrase, this);
             Phrases.bind("reset", this.addAllPhrases, this);
@@ -175,26 +183,49 @@
         },
         
         saveHistory: function() {
-            var msg = "Totals:\n\n";
+            this.stopTiming();
+            var msg = "Totals:\n";
+            var mElapsed = this.getMinutesElapsed();
             Phrases.each(function(p) {
                 msg += "\t" + p.get("phrase") + ": " 
-                    + p.get("count") + " (" + (parseInt(p.get("count")) / 75).toPrecision(3) + ")\n";
+                    + p.get("count") + " (" + (parseInt(p.get("count")) / mElapsed).toPrecision(3) + ")\n";
                 PHistory.create({ phrase: p, date: new Date() });
-                p.reset();
             });
+            this.resetPage();
             alert(msg);
+            
         },
 
         startTiming: function() {
-            alert("todo");
+            if (timer == null) {
+                startTime = new Date();
+                timer = setInterval(this.updateTime, 1000);
+            }
         },
         
         stopTiming: function() {
-            alert("todo");
+            clearInterval(timer);
+            this.timer = null;
+            endTime = new Date();
+        },
+        
+        updateTime: function() {
+            var now = new Date();
+            var elapsed = Math.round((now - startTime) / 1000);
+            var m = Math.floor(elapsed / 60);
+            var s = elapsed - (m * 60);
+            
+            this.$("#elapsed").text(m + "m " + s + "s");
+        },
+        
+        getMinutesElapsed: function() {
+            return (Math.round((endTime - startTime) / 1000) / 60);
         },
         
         resetPage: function() {
             Phrases.each(function(phrase) { phrase.reset(); });
+            this.stopTiming();
+            this.$("#elapsed").text("");
         }
     });
     
