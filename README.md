@@ -12,6 +12,6 @@ What I'm using
 
 * [jQuery 1.8.2](http://jquery.com/)
 * [Backbone.js 0.9.2](http://backbonejs.org/)
-* [Backbone.localStorage](http://github.com/jeromegn/Backbone.localStorage)
+* [Backbone.localStorage v1.0](http://github.com/jeromegn/Backbone.localStorage)
 * [Underscore.js 1.4.0](http://underscorejs.org/)
 * [jqPlot 1.0.4r1120](http://www.jqplot.com/)
