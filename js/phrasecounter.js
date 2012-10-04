@@ -2,6 +2,9 @@
  * phrasecounter.js
  *
  * Contains the Javascript for the application.  Might eventually split this into different files.
+ *
+ * TODO:
+ *  - dynamically adding items to the chart
  */
  
  $(function() {
@@ -9,6 +12,7 @@
     var timer = null;
     var startTime = null;
     var endTime = null;
+    var plot;
     
     // Models
     var Phrase = Backbone.Model.extend({
@@ -33,6 +37,8 @@
                 this.set({ "color": this.getColor() });
             }
             
+            this.emptyData();
+       
         },
         
         // temporary
@@ -54,7 +60,25 @@
         },
 
         reset: function() {
-           this.save({ count: 0 });
+            this.emptyData();
+            this.save({ count: 0 });
+        },
+        
+        pushData: function() {
+            var cData = this.get("chartData");
+            cData.shift();
+            cData.push(this.get("count"));
+            this.set({"chartData": cData});
+        },
+        
+        emptyData: function() {
+            var arr = new Array(60),
+                i = 60;
+            while (i--) {
+                arr[i] = 0;
+            }
+            
+            this.set({ "chartData": arr });
         },
         
         clear: function() {
@@ -84,12 +108,7 @@
     
     var PhraseHistoryList = Backbone.Collection.extend({
         model: PhraseHistory,
-        localStorage: new Store("pc-history"),
-        
-        getGraphData: function() {
-            // todo generate graph data
-            return [[1,2,3,5,6,8,2], [4,5,2,3,2,1,3], [2,3,4,6,7,4,6]];
-        }
+        localStorage: new Store("pc-history")
     });
 
     var Phrases = new PhraseList;
@@ -159,7 +178,18 @@
             PHistory.fetch();
             
             // we'll also render the graph, now that we have the history
-            $.jqplot('graph', PHistory.getGraphData());
+            plot = $.jqplot('graph', Phrases.pluck("chartData"), {
+                axes: {
+                  yaxis: { min: 0 },
+                  xaxis: { min: 0 }
+                },
+                series: Phrases.map(function(p) { 
+                    return {
+                        color: p.get("color"),                    
+                        markerOptions: { show: false } 
+                    }; 
+                })
+            });
         },
         
         render: function() {
@@ -224,6 +254,21 @@
             var s = elapsed - (m * 60);
             
             this.$("#elapsed").text(m + "m " + s + "s");
+            
+            Phrases.each(function(phrase) {
+                phrase.pushData();
+            });
+            
+            var newData = Phrases.pluck("chartData");
+            _.each(newData, function(el, ind) {
+                var nd = _.map(el, function(num, i) {
+                        return [i, num];
+                    });
+                plot.series[ind].data = nd;
+            });
+            
+            plot.replot({ clear: true, resetAxes: true });
+            
         },
         
         getMinutesElapsed: function() {
