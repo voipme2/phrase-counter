@@ -37,9 +37,12 @@
 }
 
 #graph {
+    margin-left: 200px;
+}
+
+#graph, #history {
     height: 250px;
     width: 800px;
-    margin-left: 200px;
     background-color: #eee;
 }
 

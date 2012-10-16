@@ -12,7 +12,7 @@
     var timer = null;
     var startTime = null;
     var endTime = null;
-    var plot;
+    var plot, historyPlot;
     
     // Models
     var Phrase = Backbone.Model.extend({
@@ -72,8 +72,8 @@
         },
         
         emptyData: function() {
-            var arr = new Array(60),
-                i = 60;
+            var arr = new Array(180),
+                i = 180;
             while (i--) {
                 arr[i] = 0;
             }
@@ -108,7 +108,15 @@
     
     var PhraseHistoryList = Backbone.Collection.extend({
         model: PhraseHistory,
-        localStorage: new Store("pc-history")
+        localStorage: new Store("pc-history"),
+        
+        chartData: function() {
+        // TODO
+            var obj = this.groupBy(function(p) {
+                var d = p.get('date');
+                return (d.getMonth() + 1) + "/" + d.getDate();
+            });
+        }
     });
 
     var Phrases = new PhraseList;
@@ -190,6 +198,8 @@
                     }; 
                 })
             });
+            
+            //historyPlot = $.jqplot('history', PHistory.chartData());
         },
         
         render: function() {
