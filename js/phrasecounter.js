@@ -36,9 +36,6 @@
             if (!this.get("color")) {
                 this.set({ "color": this.getColor() });
             }
-            
-            this.emptyData();
-       
         },
         
         // temporary
@@ -60,25 +57,7 @@
         },
 
         reset: function() {
-            this.emptyData();
             this.save({ count: 0 });
-        },
-        
-        pushData: function() {
-            var cData = this.get("chartData");
-            cData.shift();
-            cData.push(this.get("count"));
-            this.set({"chartData": cData});
-        },
-        
-        emptyData: function() {
-            var arr = new Array(180),
-                i = 180;
-            while (i--) {
-                arr[i] = 0;
-            }
-            
-            this.set({ "chartData": arr });
         },
         
         clear: function() {
@@ -103,20 +82,18 @@
             return this.filter(function(phrase){ 
                 return phrase.get('hotkey') == hotkey.toLowerCase(); 
             });
+        },
+        
+        chartData: function() {
+            return this.map(function(p) {
+                return [p.get("phrase"), p.get("count")];
+            });
         }
     });
     
     var PhraseHistoryList = Backbone.Collection.extend({
         model: PhraseHistory,
-        localStorage: new Store("pc-history"),
-        
-        chartData: function() {
-        // TODO
-            var obj = this.groupBy(function(p) {
-                var d = p.get('date');
-                return (d.getMonth() + 1) + "/" + d.getDate();
-            });
-        }
+        localStorage: new Store("pc-history")
     });
 
     var Phrases = new PhraseList;
@@ -139,6 +116,10 @@
         
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
+            if (plot) {
+                plot.series[0].data = Phrases.chartData();
+                plot.replot({ clear: true, resetAxes: true });
+            }
             return this;
         },
         
@@ -184,22 +165,21 @@
             
             Phrases.fetch();
             PHistory.fetch();
-            
+                        
             // we'll also render the graph, now that we have the history
-            plot = $.jqplot('graph', Phrases.pluck("chartData"), {
-                axes: {
-                  yaxis: { min: 0 },
-                  xaxis: { min: 0 }
+            plot = $.jqplot('graph', [Phrases.chartData()], {
+                seriesDefaults: {
+                    shadow: true,
+                    renderer: $.jqplot.PieRenderer,
+                    rendererOptions: {
+                        dataLabels: 'value',
+                        showDataLabels: true
+                    }
                 },
-                series: Phrases.map(function(p) { 
-                    return {
-                        color: p.get("color"),                    
-                        markerOptions: { show: false } 
-                    }; 
-                })
+                legend: {
+                    show: true, location: 'e'
+                }
             });
-            
-            //historyPlot = $.jqplot('history', PHistory.chartData());
         },
         
         render: function() {
@@ -263,22 +243,7 @@
             var m = Math.floor(elapsed / 60);
             var s = elapsed - (m * 60);
             
-            this.$("#elapsed").text(m + "m " + s + "s");
-            
-            Phrases.each(function(phrase) {
-                phrase.pushData();
-            });
-            
-            var newData = Phrases.pluck("chartData");
-            _.each(newData, function(el, ind) {
-                var nd = _.map(el, function(num, i) {
-                        return [i, num];
-                    });
-                plot.series[ind].data = nd;
-            });
-            
-            plot.replot({ clear: true, resetAxes: true });
-            
+            this.$("#elapsed").text(m + "m " + s + "s");                                 
         },
         
         getMinutesElapsed: function() {

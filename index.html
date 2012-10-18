@@ -8,7 +8,8 @@
         <script type="text/javascript" src="js/underscore.js"></script>
         <script type="text/javascript" src="js/backbone.js"></script>
         <script type="text/javascript" src="js/backbone.localStorage.js"></script>
-        <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jquery.jqplot.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.pieRenderer.min.js"></script>
         <script type="text/javascript" src="js/phrasecounter.js"></script>
     </head>
     <body>
@@ -39,7 +40,6 @@
                 <td class="hotkey"><img src="images/hotkey.png" title="Hotkey: <%= hotkey %>" /></td>
                 <td class="plus"><img src="images/plus.png"/></td>
                 <td class="minus"><img src="images/minus.png" /></td>
-                <td class="phrase-count" style="color: <%= color %>"><%- count %></td>
             </tr>
         </script>
     </body>
