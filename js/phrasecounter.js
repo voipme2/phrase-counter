@@ -70,6 +70,8 @@
             if (!this.get("date")) {
                 this.set({ date: new Date() });
             }
+            var d = new Date(this.get("date"));
+            this.set({ fdate: (d.getMonth() + 1) + "/" + d.getDate() });
         }
     });
 
@@ -143,6 +145,21 @@
         }
     });
     
+    var PhraseHistoryView = Backbone.View.extend({
+        
+        tagName: "tr",
+        template: _.template($("#history-template").html()),
+        
+        initialize: function() {
+            this.model.bind("destroy", this.remove, this);
+        },
+        
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        }
+    });
+    
     var AppView = Backbone.View.extend({
         el: $("#phrase-app"),
         events: {
@@ -162,6 +179,10 @@
             Phrases.bind("add", this.addPhrase, this);
             Phrases.bind("reset", this.addAllPhrases, this);
             Phrases.bind("all", this.render, this);
+            
+            PHistory.bind("add", this.addPHistory, this);
+            PHistory.bind("reset", this.addAllPHistory, this);
+            PHistory.bind("all", this.render, this);
             
             Phrases.fetch();
             PHistory.fetch();
@@ -191,8 +212,17 @@
             this.$("#active-phrases").append(view.render().el);
         },
         
+        addPHistory: function(phist) {
+            var view = new PhraseHistoryView({ model: phist });
+            this.$("#history").append(view.render().el);    
+        },
+        
         addAllPhrases: function() {
             Phrases.each(this.addPhrase);
+        },
+        
+        addAllPHistory: function() {
+            PHistory.each(this.addPHistory);
         },
         
         createOnEnter: function(e) {

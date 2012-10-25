@@ -40,7 +40,7 @@
     margin-left: 200px;
 }
 
-#graph, #history {
+#graph {
     height: 250px;
     width: 800px;
     background-color: #eee;
