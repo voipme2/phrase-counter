@@ -10,6 +10,12 @@
         <script type="text/javascript" src="js/backbone.localStorage.js"></script>
         <script type="text/javascript" src="js/jqplot/jquery.jqplot.min.js"></script>
         <script type="text/javascript" src="js/jqplot/jqplot.pieRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.highlighter.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.dateAxisRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.canvasTextRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.cursor.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.canvasAxisTickRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot/jqplot.dateAxisRenderer.min.js"></script>
         <script type="text/javascript" src="js/phrasecounter.js"></script>
     </head>
     <body>
@@ -31,7 +37,7 @@
                 <button id="save">Save</button>
             </div>
             <hr>
-            <table id="history" align="center" width="50%"></table>
+            <div id="phraseHistory"></div>
         </div>
         
         <script type="text/template" id="phrase-template">
@@ -42,12 +48,6 @@
                 <td class="plus"><img src="images/plus.png"/></td>
                 <td class="minus"><img src="images/minus.png" /></td>
             </tr>
-        </script>
-        
-        <script type="text/template" id="history-template">
-            <td><%- phrase.phrase %>,</td>
-            <td><%- phrase.count %>,</td>
-            <td><%- fdate %></td>
         </script>
     </body>
 </html>

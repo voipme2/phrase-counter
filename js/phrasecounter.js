@@ -13,6 +13,8 @@
     var startTime = null;
     var endTime = null;
     var plot, historyPlot;
+    var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
     // Models
     var Phrase = Backbone.Model.extend({
@@ -71,7 +73,8 @@
                 this.set({ date: new Date() });
             }
             var d = new Date(this.get("date"));
-            this.set({ fdate: (d.getMonth() + 1) + "/" + d.getDate() });
+            this.set({ fdate: d.getDate() + "-" + months[d.getMonth()] 
+                    + "-" + String(d.getFullYear()).substr(2,2) });
         }
     });
 
@@ -144,22 +147,7 @@
             this.model.clear();
         }
     });
-    
-    var PhraseHistoryView = Backbone.View.extend({
         
-        tagName: "tr",
-        template: _.template($("#history-template").html()),
-        
-        initialize: function() {
-            this.model.bind("destroy", this.remove, this);
-        },
-        
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
-        }
-    });
-    
     var AppView = Backbone.View.extend({
         el: $("#phrase-app"),
         events: {
@@ -180,9 +168,9 @@
             Phrases.bind("reset", this.addAllPhrases, this);
             Phrases.bind("all", this.render, this);
             
-            PHistory.bind("add", this.addPHistory, this);
-            PHistory.bind("reset", this.addAllPHistory, this);
-            PHistory.bind("all", this.render, this);
+            //PHistory.bind("add", this.addPHistory, this);
+            //PHistory.bind("reset", this.addAllPHistory, this);
+            //PHistory.bind("all", this.render, this);
             
             Phrases.fetch();
             PHistory.fetch();
@@ -198,6 +186,36 @@
                     }
                 },
                 legend: {
+                    show: true, location: 'e'
+                }
+            });
+            
+            var histGroups = PHistory.groupBy(function(p) { return p.get("phrase").phrase; });
+            var groups = _.map(histGroups, function(pg) {
+                return _.map(pg, function(p) {
+                    return [p.get('fdate'), p.get("phrase").count];
+                })
+            });
+            
+            // historical data
+            historyPlot = $.jqplot('phraseHistory', groups, {
+                axes:{
+                    xaxis:{
+                        renderer:$.jqplot.DateAxisRenderer,
+                        tickOptions:{
+                            formatString:'%b&nbsp;%#d'
+                        }
+                    }
+                },
+                highlighter: {
+                    show: true,
+                    sizeAdjust: 7.5
+                },
+                cursor: {
+                    show: false
+                },
+                legend: {
+                    labels: Phrases.pluck("phrase"),
                     show: true, location: 'e'
                 }
             });
